@@ -1,10 +1,12 @@
 package com.tut.springboot.webapp.todo;
-
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public class Todo {
     private int id;
     private String username;
+
+    @Size(min = 3, message = "enter 3 char minimum")
     private String description;
     private String targetDate;
     private boolean status;

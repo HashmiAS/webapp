@@ -1,7 +1,9 @@
 package com.tut.springboot.webapp.todo;
 
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,18 +27,29 @@ public class TodoController {
         return "listTodos";
     }
 
+    //method to allow adding new todo
     @RequestMapping(value = "add-todo", method = RequestMethod.GET)
     public String showTodoPage(ModelMap model) {
         String user=(String)model.get("name");
-        Todo todo = new Todo(0, user,"","",true);
+        Todo todo = new Todo(0, user,"add data","",true);
         model.put("todo",todo);
         return "todo";
     }
 
+    //return value to list-todo jsp page
     @RequestMapping(value = "add-todo", method = RequestMethod.POST)
-    public String addNewTodo(ModelMap model, Todo todo) {
+    public String addNewTodo(ModelMap model, @Valid Todo todo, BindingResult result) {
+        if(result.hasErrors()){
+            return "todo";
+        }
         String user=(String)model.get("name");
         todoService.addTodo(user,todo.getDescription(),todo.getTargetDate(),false);
+        return "redirect:list-todos";
+    }
+
+    @RequestMapping("delete-todo")
+    public String deleteTodo(@RequestParam int id){
+        todoService.deleteById(id);
         return "redirect:list-todos";
     }
 }
